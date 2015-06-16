@@ -1,4 +1,4 @@
-function [ timeVector ] = KinectTime( timeStamp )
+function [ timeVector ] = kin2acc( timeStamp )
 % Y:M:D:H:M:S:MS
 timeChange = 7;
 year = '';
