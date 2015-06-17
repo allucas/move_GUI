@@ -4,7 +4,7 @@ function [kinectTime] = acc2kin( timeVec_c )
 
 timeVec_v = [];
 
-kinectTime = {r,1};
+kinectTime = {};
 
 for k = 1:r
     timeVec_v(k,:) = timeVec_c{k,1};
@@ -19,8 +19,16 @@ for j = 1:r
  
     milli = milli(2:end-1);
 
+    if numel(milli) == 0
+        milli = ['000'];
+    elseif numel(milli) == 2
+        milli = [milli,'0'];
+    elseif numel(milli) == 1
+        milli = [milli,'00'];
+    end
     
     millis{j} = milli;
+    
     
 end
 
