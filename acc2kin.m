@@ -1,12 +1,7 @@
-function [kinectTime] = acc2kin( timeVec_c, add_time )
-% Goes from Accelerometer time, to Kinect time
-[r,c] = size(timeVec_c);
+function [kinectTime] = acc2kin( timeVec_c )
+% Goes from Accelerometer time, to Kinect time 
 
-if add_time == 0
-    fprintf('No additional time added')
-else
-    fprintf('Additional time added')
-end
+[r,c] = size(timeVec_c);
 
 timeVec_v = [];
 
@@ -37,6 +32,7 @@ for j = 1:r
     
     
 end
+
 
 for i = 1:r
     kinectTime{i,1} = [num2str(timeVec_v(i,1)),':',num2str(timeVec_v(i,2)),':',num2str(timeVec_v(i,3)),...

@@ -19,7 +19,7 @@ kinectTime = {};
     
 %% Add or remove time
 
-if (timeVec(1,4) + t) >= 25
+if (timeVec(1,4) + t) >= 24
     timeVec(1,3) = timeVec(1,3) + 1;
     timeVec(1,4) = timeVec(1,4) + t - 24;
 
