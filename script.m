@@ -31,13 +31,76 @@ end
  
  hr_list(1,1) = TimeStart{1}(3);
  hr_list(1,2) = TimeStart{1}(4);
- 
+ hr_list(1,3) = 1;
+ count = 1;
  for k = 2:r
      if TimeStart{k-1}(4) == TimeStart{k}(4)
+         count = count + 1;
+         hr_list(ii,3) = count;
      else
+         if count == 1
+             hr_list(ii,3) = 1;
+         end
+         ii = ii + 1;
          hr_list(ii,1) = TimeStart{k}(3);
          hr_list(ii,2) = TimeStart{k}(4);
-         ii = ii + 1;
+         count = 1;
      end
  end
 
+%% Make a string with the day and hour in order to access the folder
+
+[rr,cc] = size(hr_list);
+fName = {};
+for jj = 1:rr
+    fName{jj} = [num2str(hr_list(jj,1)),'.',num2str(hr_list(jj,2))];
+end
+
+%Maybe start a for loop here for different videos in different folders
+
+%% Go to the folder with the specified date
+
+folderName = ['*',fName{3},'*'];
+folderName = dir(folderName);
+cd(folderName.name);
+
+%% Read Timestamp file
+fid = fopen('PCTimeStamp_thread.txt')
+
+timeStamp = {};
+counter = 1;
+if fid < 0
+    fprintf('Error opening file')
+else
+    while ~(feof(fid))
+        line = fgetl(fid);
+        [s,rest] = strtok(line,',');
+        [p,rest] = strtok(rest(2:end),',');
+        timeStamp{counter} = rest(3:end);
+        counter = counter + 1;
+    end
+    
+    
+end
+
+fclose(fid);
+
+%% Calculate video second at which event occurred
+
+startTime = kin2acc(timeStamp{1});
+
+%% Video object, for reference check: http://www.mathworks.com/help/matlab/import_export/read-video-files.html
+
+vidObj = VideoReader('out.mp4');
+vidHeight = vidObj.Height;
+vidWidth = vidObj.Width;
+s = struct('cdata',zeros(vidHeight,vidWidth,'uint8'),'colormap',[]); %Matlab movie structure
+
+kk = 1;
+frames = get(vidObj,'NumberOfFrames');
+
+for kk = 1:1000
+    s(kk).cdata = read(vidObj, kk);
+end
+
+% To play the video use implay(structure,framerate)

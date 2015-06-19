@@ -1,6 +1,6 @@
 function [ timeVector ] = kin2acc( timeStamp )
 % Y:M:D:H:M:S:MS
-timeChange = 7;
+timeChange = 0;
 year = '';
 month = '';
 day = '';
@@ -27,11 +27,11 @@ if ~(timeChange == 0)
     else
         hour = str2num(hour) - timeChange;
         hour = num2str(hour);
+    end
+
 end
 
 timeVector = [str2num(year),str2num(month),str2num(day),str2num(hour)...
     ,str2num(minute),str2num(second)];
 
-
-end
 
