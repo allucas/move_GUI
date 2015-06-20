@@ -106,10 +106,30 @@ vidObj = VideoReader('out.mp4');
 vidHeight = vidObj.Height;
 vidWidth = vidObj.Width;
 s = struct('cdata',zeros(vidHeight,vidWidth,'uint8'),'colormap',[]); %Matlab movie structure
-
-kk = 1;
 frames = get(vidObj,'NumberOfFrames');
+kk = 1;
+
 
   for kk = 1:loops
       s(kk).cdata = read(vidObj, eStartFrame + kk);
   end
+  
+%% Main loop
+load folders.mat
+[rF,cF] = size(folders);
+i = 0;
+j = 0;
+for i = 1:r
+    for j = 1:rF
+        nameOfFolder = fname2acc(folders(j).name);
+        if (datenum(nameOfFolder) > datenum(TimeStart{i}))
+        elseif ((timeDiff(TimeStart{i},nameOfFolder)) < 3600)...
+                && (TimeStart{i}(3) == nameOfFolder(3))
+            fprintf('This is the folder: '); folders(j).name
+            fprintf(' For this timestamp: '); TimeStart{i}
+            input('\n Press enter to continue \n')
+        end
+    end
+    fprintf('No more folders... \n')
+end
+
