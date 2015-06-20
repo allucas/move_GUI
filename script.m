@@ -79,9 +79,7 @@ else
         [p,rest] = strtok(rest(2:end),',');
         timeStamp{counter} = rest(3:end);
         counter = counter + 1;
-    end
-    
-    
+    end 
 end
 
 fclose(fid);
@@ -89,6 +87,18 @@ fclose(fid);
 %% Make the timestamps go from kinect 
 
 startTime = kin2acc(timeStamp{1});
+
+
+%%
+frameRate = 15;
+oneS = hourChange(datevec(events{1,1}.st_mat(50)),7);
+oneE = hourChange(datevec(events{1,1}.ed_mat(50)),7);
+two = fname2acc(folderName);
+
+eStartFrame = timeDiff(oneS,two)*frameRate;
+eEndFrame = timeDiff(oneE,two)*frameRate;
+
+loops = round(abs(eStartFrame - eEndFrame));
 
 %% Video object, for reference check: http://www.mathworks.com/help/matlab/import_export/read-video-files.html
 
@@ -99,23 +109,6 @@ s = struct('cdata',zeros(vidHeight,vidWidth,'uint8'),'colormap',[]); %Matlab mov
 
 kk = 1;
 frames = get(vidObj,'NumberOfFrames');
-
-% for kk = 1:1000
-%     s(kk).cdata = read(vidObj, kk);
-% end
-
-% To play the video use implay(structure,framerate)
-
-%%
-frameRate = 15;
-oneS = hourChange(datevec(events{1,1}.st_mat(51)),7);
-oneE = hourChange(datevec(events{1,1}.ed_mat(51)),7);
-two = fname2acc(folderName);
-
-eStartFrame = timeDiff(oneS,two)*frameRate;
-eEndFrame = timeDiff(oneE,two)*frameRate;
-
-loops = round(abs(eStartFrame - eEndFrame));
 
   for kk = 1:loops
       s(kk).cdata = read(vidObj, eStartFrame + kk);
