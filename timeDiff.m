@@ -1,4 +1,5 @@
 function [ diff ] = timeDiff(t1,t2) 
+% 1:42 p.m.
 % Find the time difference between two time vectors t1 MUST be the latter
 % time
 % The output is in seconds
