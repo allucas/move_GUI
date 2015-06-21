@@ -1,5 +1,5 @@
 function [kinectTime] = acc2kinV(timeVec, t)
-% Goes from Accelerometer time, to Kinect time 
+% Goes from Accelerometer time, to Kinect time and adds extra hours
 
 kinectTime = {};
 

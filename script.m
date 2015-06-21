@@ -8,20 +8,23 @@ clc, clear all;
 
  cd('/Users/AlfredoLucas/Documents/MATLAB/Move_Project/summerStuff/code/move_GUI')
 
+%% Choose day and accelerometer
+day = 1;
+accel = 1;
 %% Create start-end time cell array 
 % Time format: 1-Year, 2-Month, 3-Day, 4-Hour, 5-Minute, 6-Second
 
 % For event start time
-[r,c] = size(events{1,1}.st_mat);
+[r,c] = size(events{day,accel}.st_mat);
 for i = 1:r
-    TimeStart{i,1} = hourChange(datevec(events{1,1}.st_mat(i)),7);
-    TimeStartKin{i,1} = acc2kinV(datevec(events{1,1}.st_mat(i)),7);
+    TimeStart{i,1} = hourChange(datevec(events{day,accel}.st_mat(i)),7);
+    TimeStartKin{i,1} = acc2kinV(datevec(events{day,accel}.st_mat(i)),7);
 end
 
 % For event end time
  for j = 1:r
-     TimeStop{j,1} = hourChange(datevec(events{1,1}.ed_mat(j)),7);
-     TimeStopKin{j,1} = acc2kinV(datevec(events{1,1}.ed_mat(j)),7);
+     TimeStop{j,1} = hourChange(datevec(events{day,accel}.ed_mat(j)),7);
+     TimeStopKin{j,1} = acc2kinV(datevec(events{day,accel}.ed_mat(j)),7);
  end
  
  % Make a list of the hours (day, hour, number of events)
@@ -66,27 +69,27 @@ folderName = folderName.name;
 cd(folderName);
 
 %% Read Timestamp file
-fid = fopen('PCTimeStamp_thread.txt');
-
-timeStamp = {};
-counter = 1;
-if fid < 0
-    fprintf('Error opening file')
-else
-    while ~(feof(fid))
-        line = fgetl(fid);
-        [s,rest] = strtok(line,',');
-        [p,rest] = strtok(rest(2:end),',');
-        timeStamp{counter} = rest(3:end);
-        counter = counter + 1;
-    end 
-end
-
-fclose(fid);
+% fid = fopen('PCTimeStamp_thread.txt');
+% 
+% timeStamp = {};
+% counter = 1;
+% if fid < 0
+%     fprintf('Error opening file')
+% else
+%     while ~(feof(fid))
+%         line = fgetl(fid);
+%         [s,rest] = strtok(line,',');
+%         [p,rest] = strtok(rest(2:end),',');
+%         timeStamp{counter} = rest(3:end);
+%         counter = counter + 1;
+%     end 
+% end
+% 
+% fclose(fid);
 
 %% Make the timestamps go from kinect 
 
-startTime = kin2acc(timeStamp{1});
+% startTime = kin2acc(timeStamp{1});
 
 
 %%
@@ -119,15 +122,39 @@ load folders.mat
 [rF,cF] = size(folders);
 i = 0;
 j = 0;
+startFrame = 0;
+endFrame = 0;
+frameDiff = 0;
+frameRate = 15;
 for i = 1:r
     for j = 1:rF
         nameOfFolder = fname2acc(folders(j).name);
         if (datenum(nameOfFolder) > datenum(TimeStart{i}))
         elseif ((timeDiff(TimeStart{i},nameOfFolder)) < 3600)...
                 && (TimeStart{i}(3) == nameOfFolder(3))
-            fprintf('This is the folder: '); folders(j).name
-            fprintf(' For this timestamp: '); TimeStart{i}
-            input('\n Press enter to continue \n')
+            temp = acc2kinV(TimeStart{i},0);
+            fprintf('Folder: %s Timestamp: %s',folders(j).name, temp{1});
+            
+            %Set parameters
+            startFrame = timeDiff(TimeStart{i},nameOfFolder)*frameRate;
+            endFrame = timeDiff(TimeStop{i},nameOfFolder)*frameRate;
+            frameDiff = round(endFrame - startFrame);
+            
+            %Go to folder
+            cd(folder)
+            
+            %Video object
+            vidObj = VideoReader('out.mp4');
+            vidHeight = vidObj.Height;
+            vidWidth = vidObj.Width;
+            s = struct('cdata',zeros(vidHeight,vidWidth,'uint8'),'colormap',[]); %Matlab movie structure
+          
+            for kk = 1:frameDiff
+                s(kk).cdata = read(vidObj, startFrame + kk);
+            end
+            implay(s);
+            input('\n Press enter to continue')
+            close all;
         end
     end
     fprintf('No more folders... \n')
