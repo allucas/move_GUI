@@ -9,8 +9,10 @@ clc, clear all;
  cd('/Users/AlfredoLucas/Documents/MATLAB/Move_Project/summerStuff/code/move_GUI')
 
 %% Choose day and accelerometer
+
 day = 1;
 accel = 1;
+
 %% Create start-end time cell array 
 % Time format: 1-Year, 2-Month, 3-Day, 4-Hour, 5-Minute, 6-Second
 
@@ -63,10 +65,10 @@ end
 
 %% Go to the folder with the specified date
 
-folderName = ['*',fName{3},'*'];
-folderName = dir(folderName);
-folderName = folderName.name;
-cd(folderName);
+% folderName = ['*',fName{3},'*'];
+% folderName = dir(folderName);
+% folderName = folderName.name;
+% cd(folderName);
 
 %% Read Timestamp file
 % fid = fopen('PCTimeStamp_thread.txt');
@@ -93,29 +95,29 @@ cd(folderName);
 
 
 %%
-frameRate = 15;
-oneS = hourChange(datevec(events{1,1}.st_mat(50)),7);
-oneE = hourChange(datevec(events{1,1}.ed_mat(50)),7);
-two = fname2acc(folderName);
-
-eStartFrame = timeDiff(oneS,two)*frameRate;
-eEndFrame = timeDiff(oneE,two)*frameRate;
-
-loops = round(abs(eStartFrame - eEndFrame));
-
-%% Video object, for reference check: http://www.mathworks.com/help/matlab/import_export/read-video-files.html
-
-vidObj = VideoReader('out.mp4');
-vidHeight = vidObj.Height;
-vidWidth = vidObj.Width;
-s = struct('cdata',zeros(vidHeight,vidWidth,'uint8'),'colormap',[]); %Matlab movie structure
-frames = get(vidObj,'NumberOfFrames');
-kk = 1;
-
-
-  for kk = 1:loops
-      s(kk).cdata = read(vidObj, eStartFrame + kk);
-  end
+% frameRate = 15;
+% oneS = hourChange(datevec(events{1,1}.st_mat(50)),7);
+% oneE = hourChange(datevec(events{1,1}.ed_mat(50)),7);
+% two = fname2acc(folderName);
+% 
+% eStartFrame = timeDiff(oneS,two)*frameRate;
+% eEndFrame = timeDiff(oneE,two)*frameRate;
+% 
+% loops = round(abs(eStartFrame - eEndFrame));
+% 
+% %% Video object, for reference check: http://www.mathworks.com/help/matlab/import_export/read-video-files.html
+% 
+% vidObj = VideoReader('out.mp4');
+% vidHeight = vidObj.Height;
+% vidWidth = vidObj.Width;
+% s = struct('cdata',zeros(vidHeight,vidWidth,'uint8'),'colormap',[]); %Matlab movie structure
+% frames = get(vidObj,'NumberOfFrames');
+% kk = 1;
+% 
+% 
+%   for kk = 1:loops
+%       s(kk).cdata = read(vidObj, eStartFrame + kk);
+%   end
   
 %% Main loop
 load folders.mat
@@ -126,14 +128,20 @@ startFrame = 0;
 endFrame = 0;
 frameDiff = 0;
 frameRate = 15;
+
 for i = 1:r
     for j = 1:rF
+        
         nameOfFolder = fname2acc(folders(j).name);
+        
         if (datenum(nameOfFolder) > datenum(TimeStart{i}))
-        elseif ((timeDiff(TimeStart{i},nameOfFolder)) < 3600)...
-                && (TimeStart{i}(3) == nameOfFolder(3))
+            
+        elseif ((timeDiff(TimeStart{i},nameOfFolder)) < 3610)...
+                && ((TimeStart{i}(3) == nameOfFolder(3))||...
+                ((TimeStart{i}(3) ~=  nameOfFolder(3)) && ((TimeStart{i}(4) == 0) && (nameOfFolder(4) == 23))))
+            
             temp = acc2kinV(TimeStart{i},0);
-            fprintf('Folder: %s Timestamp: %s',folders(j).name, temp{1});
+            fprintf('Folder: %s Timestamp: %s \n',folders(j).name, temp{1});
             
             %Set parameters
             startFrame = timeDiff(TimeStart{i},nameOfFolder)*frameRate;
@@ -141,9 +149,9 @@ for i = 1:r
             frameDiff = round(endFrame - startFrame);
             
             %Go to folder
-            cd(folder)
+            cd(['/net/expData/Move/Patient_Data/Patient1/IR/',folders(j).name])
             
-            %Video object
+            % Load Video object
             vidObj = VideoReader('out.mp4');
             vidHeight = vidObj.Height;
             vidWidth = vidObj.Width;
@@ -155,6 +163,7 @@ for i = 1:r
             implay(s);
             input('\n Press enter to continue')
             close all;
+            
         end
     end
     fprintf('No more folders... \n')

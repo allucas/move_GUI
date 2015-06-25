@@ -1,0 +1,28 @@
+readme file
+
+The main file you want to run is script.m, this will have the core of the program. All the other files are necessary for the script to run appropiately.
+
+At the beginning of the program where it says choose day and accelerometer you can put the day you are interested in analyzing (1,2,3,4,5,6 or 7) and the accelerometer (1,2,3 or 4). Then you can run the script and it will pop the videos one by one.
+
+FUNCTIONS:
+
+acc2kinV.m & acc2kin.m - It is a function that goes from accelerometer time, which is in the form of a double vector [year month day hour min sec] to kinect timestamp which is a string in the form (year:month:day:hour:min:sec:millisec). The difference between acc2kinV.m and acc2kin.m is that acc2kin.m takes a cell array as an input and acc2kinV.m takes a vector as an input. These functions take an extra parameter that adds or subtracts hours to the inputted time.
+
+kin2acc.m - Does the same as acc2kinV.m but backwards
+
+fname2acc.m - This function converts the folder name which is a string in the form of (year.month.day.hour.min.sec) to the previously mentioned double vector in which the accelerometer time is written.  
+
+hourChange.m - This function adds or subtracts a specific number of hours to the input vector.
+
+timeDiff.m - Takes the time difference between two vectors given in the dateVec format. The output is given in seconds.
+
+getFrames.m - Does the same thing as the script but only for one specific event. The first parameter is the start event, the second the end and the third the number of extra seconds you want to add to the beginning and end of the video stream. The output is a matlab video structure with all the frames of the specified video segment. The frames can be seen all in sequence through implay() or a specific frame at a time through the image() function. 
+NOTE: For this function to work it must be able to access the folders in /net/expData/Move/Patient_Data/Patient1/IR/
+
+
+FILES:
+
+events.mat - Loads a variable named events which is a 7 by 4 structure cell array. The rows correspond to each day and the columns to the accelerometer. The st_mat and ed_mat variables of the specific structure are the ones that are used in the code.
+
+folders.mat - Loads a variable that contains the names of all the folders in the directory: /net/expData/Move/Patient_Data/Patient1/IR/. I used this to test if the script was capable of locating in which folder each timestamp would correspond.
+
