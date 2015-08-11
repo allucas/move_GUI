@@ -33,8 +33,8 @@ for j = 1:rF
             
             %Go to folder
              % Use this: cd(['/net/expData/Move/Patient_Data/Patient1/IR/',folders(j).name])
-             cd(folders(j).name)
-            
+             % cd(folders(j).name)
+            cd(['/Volumes/net/expData/Move/Patient_Data/Patient1/IR/',folders(j).name])
             % Load Video object
             vidObj = VideoReader('out.mp4');
             vidHeight = vidObj.Height;
