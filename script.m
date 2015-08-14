@@ -163,7 +163,7 @@ for i = startAt:r
             
             startFrame = timeDiff(TimeStart{i},nameOfFolder)*frameRate;
             endFrame = timeDiff(TimeStop{i},nameOfFolder)*frameRate;
-            frameDiff = round(endFrame - startFrame);
+            frameDiff = round(endFrame - startFrame) + 90; %The 90 adds 3 sec before and after to the frame
             
             %Go to folder
             cd([directory,folders(j).name])
@@ -173,9 +173,16 @@ for i = startAt:r
             vidHeight = vidObj.Height;
             vidWidth = vidObj.Width;
             s = struct('cdata',zeros(vidHeight,vidWidth,'uint8'),'colormap',[]); %Matlab movie structure
-          
+             
+            %This stops the script from crashing when the index is bigger 
+            %than the number of frames in Movie Structure 
+            
+            if vidObj.NumberOfFrames < ((startFrame - 45) + frameDiff)
+                    break
+            end
+                
             for kk = 1:frameDiff
-                s(kk).cdata = read(vidObj, startFrame + kk);
+                s(kk).cdata = read(vidObj, (startFrame - 45) + kk);
             end
             toc
             
